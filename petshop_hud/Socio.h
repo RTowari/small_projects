@@ -21,7 +21,6 @@ class Socio{
         Consulta* consultas[CANT_CONSULTAS];
         int topeMascotas;
         int topeConsultas;
-        int topeSocios;
     public:
         Socio();
         Socio(string, string, DtFecha);

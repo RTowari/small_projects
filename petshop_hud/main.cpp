@@ -31,9 +31,15 @@ void registrarSocio(string, string, DtFecha); // IMPLEMENTADA
 void agregarMascota(); //  (SEMI IMPLEMENTADA)
 void agregarMascota(string ci, DtMascota& dtMascota);//SEMI IMPLEMENTADA
 
+// OPERACION 4
+
+void verConsultasAntesDeFecha(); // (SEMI IMPLEMENTADA)
+DtConsulta** (DtFecha& dtFecha, string ci, int& CANT_CONSULTAS); // /(SEMI IMPLEMENTADA)
+
+
 // OPERACIONES POR IMPLEMENTAR
 void ingresarConsulta() {}
-void verConsultasAntesDeFecha() {}
+
 void eliminarSocio() {}
 void obtenerMascota() {}
 
@@ -149,7 +155,7 @@ void registrarSocio() {
 }
 
  // OPERACION 2
- void agregarMascota() {
+void agregarMascota() {
 
     limpiarPantalla(); // Esta funcion limpia la pantalla en linux y windows
     cout <<"________________________"<<endl;
@@ -249,10 +255,49 @@ void registrarSocio() {
         catch(invalid_argument& e){
             cout << e.what() << endl;
         }                  
-      
+
         esperarPorInput(); // lee el enter del usuario en linux y windows
     }
     catch(invalid_argument& e){
+        cout << e.what() << endl;
+    }
+}
+
+// Operación 4
+
+void verConsultasAntesDeFecha() {
+
+    limpiarPantalla(); 
+    cout <<"________________________"<<endl;
+    cout <<"__VER__CONSULTAS__ANTES__DE__FECHA__"<< endl;
+
+    string socio_ci;
+    int dia,mes,anio,cantConsultas;
+	DtFecha dtFecha;
+	
+	cout << "\nCI: ";
+	cin >> socio_ci;
+	try{
+		obtenerSocio(socio_ci);
+		
+		cout << "\nANTES DE LA FECHA" <<endl;
+		cout << "DIA: ";
+		cin >> dia;
+		cout << "MES: ";
+		cin >> mes;
+		cout << "ANIO: ";
+		cin >> anio;
+		dtFecha = DtFecha(dia,mes,anio);
+
+        cout << "\nCONSULTAS ANTES DE " << dtFecha << ": " << endl;
+
+        DtConsulta** consultas = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
+        for (int i = 0; i < cantConsultas; i++)
+        cout << "\n\n" << *(consultas[i]);
+    
+        cout << "\nPulse enter para continuar..." << endl;
+        system("read X");
+    } catch (invalid_argument& e) {
         cout << e.what() << endl;
     }
 }
@@ -276,6 +321,25 @@ void agregarMascota(string ci, DtMascota& mascota){
     }
 }
 
+DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantConsultas) {
+    cantConsultas = 0;
+    Socio* socio = obtenerSocio(ci);
+    
+    int cantidad;
+    Consulta** consultas = socio->obtenerConsulta(cantidad);
+    DtConsulta** dtConsultas = new DtConsulta*[cantidad];  // Se reserva el máximo posible
+
+    int i = 0;
+    while (i < cantidad) {
+        if (consultas[i]->getfechaConsulta() < dtFecha) {
+            dtConsultas[cantConsultas] = new DtConsulta(consultas[i]->getfechaConsulta(), consultas[i]->getMotivo());
+            cantConsultas++;
+        }
+        i++;
+    }
+
+    return dtConsultas;  // Se devuelve directamente el array sin copiarlo a otro
+}
 
 // OPERACIONES AUXILIARES
 void noExisteSocio(string ci) {
@@ -305,6 +369,17 @@ Socio* obtenerSocio(string ci){
 	}
 	return socioObtenido;
 }
+
+Consulta** obtenerConsulta(Socio* socio, int& cantidad) {
+    if (socio->getCI() == "") {  // Si el socio no tiene CI, asumimos que no existe
+        cantidad = 0;
+        cout << "\n Error: Socio no encontrado." << endl;
+        return new Consulta*[0];
+    }
+
+    return socio->obtenerConsulta(cantidad);
+}
+
 
 void limpiarPantalla(){
     #ifdef _WIN32
