@@ -34,7 +34,7 @@ void agregarMascota(string ci, DtMascota& dtMascota);//SEMI IMPLEMENTADA
 // OPERACION 4
 
 void verConsultasAntesDeFecha(); // (SEMI IMPLEMENTADA)
-DtConsulta** (DtFecha& dtFecha, string ci, int& CANT_CONSULTAS); // /(SEMI IMPLEMENTADA)
+DtConsulta** verConsultasAntesDeFecha(DtFecha&, string, int&); // /(SEMI IMPLEMENTADA)
 
 
 // OPERACIONES POR IMPLEMENTAR
@@ -88,8 +88,7 @@ int main() {
                 //ingresarConsulta();
                 break;
             case 4:
-                cout << "NO IMPLEMENTADA" << endl;
-                //verConsultasAntesDeFecha();
+                verConsultasAntesDeFecha();
                 break;
             case 5:
                 cout << "NO IMPLEMENTADA" << endl;
@@ -266,40 +265,51 @@ void agregarMascota() {
 // Operación 4
 
 void verConsultasAntesDeFecha() {
-
     limpiarPantalla(); 
     cout <<"________________________"<<endl;
     cout <<"__VER__CONSULTAS__ANTES__DE__FECHA__"<< endl;
 
     string socio_ci;
-    int dia,mes,anio,cantConsultas;
-	DtFecha dtFecha;
-	
-	cout << "\nCI: ";
-	cin >> socio_ci;
-	try{
-		obtenerSocio(socio_ci);
-		
-		cout << "\nANTES DE LA FECHA" <<endl;
-		cout << "DIA: ";
-		cin >> dia;
-		cout << "MES: ";
-		cin >> mes;
-		cout << "ANIO: ";
-		cin >> anio;
-		dtFecha = DtFecha(dia,mes,anio);
+    int dia, mes, anio, cantConsultas;
+    DtFecha dtFecha;
 
-        cout << "\nCONSULTAS ANTES DE " << dtFecha << ": " << endl;
-
-        DtConsulta** consultas = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
-        for (int i = 0; i < cantConsultas; i++)
-        cout << "\n\n" << *(consultas[i]);
+    cout << "\nCI: ";
+    cin >> socio_ci;
     
-        cout << "\nPulse enter para continuar..." << endl;
-        system("read X");
-    } catch (invalid_argument& e) {
-        cout << e.what() << endl;
+    Socio* socio = obtenerSocio(socio_ci);
+    if (socio->getCI() == "") {
+        cout << "\nError: El socio con CI " << socio_ci << " no existe." << endl;
+        return;
     }
+
+    cout << "\nANTES DE LA FECHA" << endl;
+    cout << "DIA: ";
+    cin >> dia;
+    cout << "MES: ";
+    cin >> mes;
+    cout << "ANIO: ";
+    cin >> anio;
+    dtFecha = DtFecha(dia, mes, anio);
+
+    cout << "\nCONSULTAS ANTES DE " << dtFecha << ": " << endl;
+
+    DtConsulta** consultas = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
+
+    if (cantConsultas == 0) {
+        cout << "No hay consultas antes de " << dtFecha << "." << endl;
+    } else {
+        for (int i = 0; i < cantConsultas; i++) {
+            for (int i = 0; i < cantConsultas; i++) {
+                cout << "\nFecha: " << consultas[i]->getfechaConsulta()
+                     << " | Motivo: " << consultas[i]->getMotivo();
+                delete consultas[i];
+            }
+        }
+    }
+    delete[] consultas;
+
+    cout << "\nPulse enter para continuar..." << endl;
+    system("read X");
 }
 
 // OPERACIONES A IMPLEMENTAR
@@ -327,7 +337,7 @@ DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantCons
     
     int cantidad;
     Consulta** consultas = socio->obtenerConsulta(cantidad);
-    DtConsulta** dtConsultas = new DtConsulta*[cantidad];  // Se reserva el máximo posible
+    DtConsulta** dtConsultas = new DtConsulta*[cantidad];
 
     int i = 0;
     while (i < cantidad) {
@@ -338,7 +348,7 @@ DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantCons
         i++;
     }
 
-    return dtConsultas;  // Se devuelve directamente el array sin copiarlo a otro
+    return dtConsultas;
 }
 
 // OPERACIONES AUXILIARES
@@ -371,7 +381,7 @@ Socio* obtenerSocio(string ci){
 }
 
 Consulta** obtenerConsulta(Socio* socio, int& cantidad) {
-    if (socio->getCI() == "") {  // Si el socio no tiene CI, asumimos que no existe
+    if (socio->getCI() == "") {
         cantidad = 0;
         cout << "\n Error: Socio no encontrado." << endl;
         return new Consulta*[0];
