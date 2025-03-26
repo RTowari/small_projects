@@ -14,7 +14,7 @@ class DtMascota{
         float racionDiaria;
     public:
         DtMascota();
-        DtMascota(string, Genero, float, float);
+        DtMascota(string, Genero, float, float racionDiaria = 0);
         string getnombre();
         Genero getgenero();
         float getpeso();

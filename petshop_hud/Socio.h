@@ -38,6 +38,7 @@ class Socio{
         ~Socio();
 
         void agregarMascota(Mascota*);
+        void setConsulta(Consulta*);
 
         Mascota** obtenerMascotas(int&);
         Consulta** obtenerConsulta(int&);

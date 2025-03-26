@@ -6,6 +6,7 @@ Socio::Socio(string CI, string nombre, DtFecha fecha) {
     this->nombre=nombre;
     this->fechaIngreso = fecha;
     this->topeMascotas = 0;
+    this->topeConsultas = 0;
 }
 
 string Socio::getCI(){
@@ -34,6 +35,15 @@ void Socio::agregarMascota(Mascota* mascota){
     this->topeMascotas++;
 }
 
+void Socio::setConsulta(Consulta* consulta){
+    this->consultas[topeConsultas] = consulta;  
+    this->topeConsultas++;
+}
+
+Consulta** Socio::obtenerConsulta(int& cantidad) {
+    cantidad = this->topeConsultas;
+    return this->consultas;
+}
 
 Mascota** Socio:: obtenerMascotas(int& cantMascotas){
     cantMascotas=this->topeMascotas;
