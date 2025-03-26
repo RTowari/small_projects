@@ -1,0 +1,6 @@
+18/03/2025 - Se añadieron los cpp y h para los clases.
+            Se añadió el makefile para limpiar y ejecutar
+            Se añadió el pdf con la letra del proyecto
+
+20/03/2025 - Se agregaron la mayoria de los Data Type, enum y clases.
+
