@@ -30,22 +30,17 @@ void registrarSocio(string, string, DtFecha); // IMPLEMENTADA
 // OPERACION 2 (SEMI IMPLEMENTADA)
 void agregarMascota(); //  (SEMI IMPLEMENTADA)
 void agregarMascota(string ci, DtMascota& dtMascota);//SEMI IMPLEMENTADA
-
-// OPERACION 4
-
+// OPERACION 4 (SEMI IMPLEMENTADA)
 void verConsultasAntesDeFecha(); // (SEMI IMPLEMENTADA)
 DtConsulta** verConsultasAntesDeFecha(DtFecha&, string, int&); // /(SEMI IMPLEMENTADA)
 
-
 // OPERACIONES POR IMPLEMENTAR
 void ingresarConsulta() {}
-
 void eliminarSocio() {}
 void obtenerMascota() {}
 
 // Declaraciones de funciones
 void ingresarConsulta(); // NO IMPLEMENTADA 
-void verConsultasAntesDeFecha(); // NO IMPLEMENTADA 
 void eliminarSocio(); // NO IMPLEMENTADA 
 void obtenerMascotas(); // NO IMPLEMENTADA 
 void liberarMemoria(); // IMPLEMENTADA
@@ -55,6 +50,7 @@ void noExisteSocio(string ci);
 Socio* obtenerSocio(string ci);
 void pesoCorrecto(float);
 void racionDiariaCorrecta(float);
+Consulta** obtenerConsulta(Socio*, int&);
 void limpiarPantalla();
 void esperarPorInput();
 
@@ -80,15 +76,14 @@ int main() {
                 registrarSocio();
                 break;
             case 2:
-                cout << "NO IMPLEMENTADA" << endl;
-                //agregarMascota();
+                agregarMascota();
                 break;
             case 3:
                 cout << "NO IMPLEMENTADA" << endl;
                 //ingresarConsulta();
                 break;
             case 4:
-                verConsultasAntesDeFecha();
+                    verConsultasAntesDeFecha();
                 break;
             case 5:
                 cout << "NO IMPLEMENTADA" << endl;
@@ -154,7 +149,7 @@ void registrarSocio() {
 }
 
  // OPERACION 2
-void agregarMascota() {
+ void agregarMascota() {
 
     limpiarPantalla(); // Esta funcion limpia la pantalla en linux y windows
     cout <<"________________________"<<endl;
@@ -254,7 +249,7 @@ void agregarMascota() {
         catch(invalid_argument& e){
             cout << e.what() << endl;
         }                  
-
+      
         esperarPorInput(); // lee el enter del usuario en linux y windows
     }
     catch(invalid_argument& e){
@@ -265,9 +260,10 @@ void agregarMascota() {
 // Operación 4
 
 void verConsultasAntesDeFecha() {
-    limpiarPantalla(); 
-    cout <<"________________________"<<endl;
-    cout <<"__VER__CONSULTAS__ANTES__DE__FECHA__"<< endl;
+
+    limpiarPantalla();
+    cout << "________________________" << endl;
+    cout << "__VER__CONSULTAS__ANTES__DE__FECHA__" << endl;
 
     string socio_ci;
     int dia, mes, anio, cantConsultas;
@@ -275,41 +271,55 @@ void verConsultasAntesDeFecha() {
 
     cout << "\nCI: ";
     cin >> socio_ci;
-    
-    Socio* socio = obtenerSocio(socio_ci);
-    if (socio->getCI() == "") {
-        cout << "\nError: El socio con CI " << socio_ci << " no existe." << endl;
-        return;
-    }
 
-    cout << "\nANTES DE LA FECHA" << endl;
-    cout << "DIA: ";
-    cin >> dia;
-    cout << "MES: ";
-    cin >> mes;
-    cout << "ANIO: ";
-    cin >> anio;
-    dtFecha = DtFecha(dia, mes, anio);
 
-    cout << "\nCONSULTAS ANTES DE " << dtFecha << ": " << endl;
+    try {
+       /* obtenerSocio(socio_ci);
+        cout << "Cantidad de socios registrados: " << arraySocios.topeS<< endl;
 
-    DtConsulta** consultas = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
+       if (true)
+            cout << "\nsi existe socio en el sistema con la CI " << socio_ci << " .\n";
+        else
+        
+        cout << "\nno existe socio en el sistema con la CI " << socio_ci << " .\n";
+        esperarPorInput();// lee el enter del usuario en linux y windows  No me aparece para comprobar si existe o no la ci*/
+ 
+        cout << "\nANTES DE LA FECHA" << endl;
+        cout << "DIA: ";
+        cin >> dia;
+        cout << "MES: ";
+        cin >> mes;
+        cout << "ANIO: ";
+        cin >> anio;
 
-    if (cantConsultas == 0) {
-        cout << "No hay consultas antes de " << dtFecha << "." << endl;
-    } else {
-        for (int i = 0; i < cantConsultas; i++) {
+            if (dia <= 0 || mes <= 0 || mes > 12 || anio <= 0) {
+                throw invalid_argument("Error: Fecha ingresada no valida.");
+            }
+        
+        
+        dtFecha = DtFecha(dia, mes, anio);
+
+        cout << "\nCONSULTAS ANTES DE " << dtFecha << ": " << endl;
+
+        DtConsulta** consultasFecha = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
+
+        if (cantConsultas == 0) {
+            cout << "No hay consultas antes de " << dtFecha << "." << endl;
+        } else {
             for (int i = 0; i < cantConsultas; i++) {
-                cout << "\nFecha: " << consultas[i]->getfechaConsulta()
-                     << " | Motivo: " << consultas[i]->getMotivo();
-                delete consultas[i];
+                cout << "\nFecha: " << consultasFecha[i]->getfechaConsulta()
+                     << " | Motivo: " << consultasFecha[i]->getMotivo();
+                delete consultasFecha[i];
             }
         }
-    }
-    delete[] consultas;
 
-    cout << "\nPulse enter para continuar..." << endl;
-    system("read X");
+        delete[] consultasFecha;
+
+        esperarPorInput();// lee el enter del usuario en linux y windows
+
+    } catch (invalid_argument& e) {
+        cout << e.what() << endl;
+    }
 }
 
 // OPERACIONES A IMPLEMENTAR
@@ -334,7 +344,7 @@ void agregarMascota(string ci, DtMascota& mascota){
 DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantConsultas) {
     cantConsultas = 0;
     Socio* socio = obtenerSocio(ci);
-    
+
     int cantidad;
     Consulta** consultas = socio->obtenerConsulta(cantidad);
     DtConsulta** dtConsultas = new DtConsulta*[cantidad];
@@ -350,6 +360,7 @@ DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantCons
 
     return dtConsultas;
 }
+
 
 // OPERACIONES AUXILIARES
 void noExisteSocio(string ci) {
@@ -380,7 +391,7 @@ Socio* obtenerSocio(string ci){
 	return socioObtenido;
 }
 
-Consulta** obtenerConsulta(Socio* socio, int& cantidad) {
+Consulta** obtenerConsulta(Socio* socio, int& cantidad, string ci) {
     if (socio->getCI() == "") {
         cantidad = 0;
         cout << "\n Error: Socio no encontrado." << endl;
@@ -389,7 +400,6 @@ Consulta** obtenerConsulta(Socio* socio, int& cantidad) {
 
     return socio->obtenerConsulta(cantidad);
 }
-
 
 void limpiarPantalla(){
     #ifdef _WIN32
