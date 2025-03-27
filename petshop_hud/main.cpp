@@ -32,7 +32,6 @@ void agregarMascota(); //  (SEMI IMPLEMENTADA)
 void agregarMascota(string ci, DtMascota& dtMascota);//SEMI IMPLEMENTADA
 
 // OPERACIONES POR IMPLEMENTAR
-void eliminarSocio() {}
 void obtenerMascota() {}
 
 // Declaraciones de funciones
@@ -50,7 +49,8 @@ void pesoCorrecto(float);
 void racionDiariaCorrecta(float);
 void limpiarPantalla();
 void esperarPorInput();
-
+void eliminarSocioArray(string ci);
+void verSocios();
 
 int main() {
     //van todos los topes
@@ -83,8 +83,7 @@ int main() {
                 //verConsultasAntesDeFecha();
                 break;
             case 5:
-                cout << "NO IMPLEMENTADA" << endl;
-                //eliminarSocio();
+                eliminarSocio();
                 break;
             case 6:
                 cout << "NO IMPLEMENTADA" << endl;
@@ -281,7 +280,6 @@ void ingresarConsulta() {
         
         Consulta* c = new Consulta(fecha, motivo);
         s->setConsulta(c);
-
         cout << "\nConsulta registrada con exito para el socio: " << s->getNombre() << " -CI: " << s->getCI() << "\n-MOTIVO: " << c->getMotivo() << endl;
         cout << "\n" << endl;
         
@@ -358,6 +356,35 @@ void verConsultasAntesDeFecha() {
     }
 }
 
+void eliminarSocio(){
+
+        limpiarPantalla(); // Esta funcion limpia la pantalla en linux y windows
+
+        cout <<"________________________"<<endl;
+        cout <<"____ELIMINAR_SOCIO____"<< endl;
+
+        string ci;
+        int dia, mes, anio;
+
+        cout << "\nINGRESE CI: ";
+        cin >> ci;
+
+    try{        
+        Socio* s = obtenerSocio(ci);
+        s->vaciarConsultas();
+        s->vaciarMascotas();
+
+        eliminarSocioArray(ci);
+        
+        cout << "Socio eliminado: " << ci << endl;
+
+        verSocios();
+
+    }catch (invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+} 
+
 // OPERACIONES A IMPLEMENTAR
 void registrarSocio(string ci, string nombre, DtFecha fecha) {
     Socio* socio = new Socio(ci,nombre,fecha);
@@ -408,6 +435,32 @@ DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantCons
     return dtConsultas;
 }
 
+void eliminarSocioArray(string ci){ 
+
+    bool eliminado = false;
+
+    for(int i=0; i < arraySocios.topeS && eliminado == false; i++){
+        if(arraySocios.socios[i]->getCI() == ci){
+            arraySocios.socios[i]->~Socio();
+            eliminado = true;
+            
+            if(i < arraySocios.topeS - 1)      // si no es la ultima posicion del array 
+                arraySocios.socios[i] = arraySocios.socios[arraySocios.topeS - 1];  //lleva el ultimo a la pos del eliminado
+
+            arraySocios.topeS--;       
+        }
+    }
+}
+
+void verSocios(){
+
+    for(int i = 0; i < arraySocios.topeS; i++){
+        cout << i + 1 << ")" << "CI: " << arraySocios.socios[i]->getCI() << " NOMBRE: " << arraySocios.socios[i]->getNombre() << endl;
+    }
+
+}
+
+
 // OPERACIONES AUXILIARES
 void noExisteSocio(string ci) {
     int i=0;
@@ -438,7 +491,7 @@ Socio* obtenerSocio(string ci){
 	if(existe) 
         return socioObtenido;
     else
-        throw invalid_argument("\nERROR: NO EXISTE USUARIO CON ESA CI EN EL SISTEMA\n");
+        throw invalid_argument("\nERROR: NO EXISTE/falta probar USUARIO CON ESA CI EN EL SISTEMA\n");
 }
 
 void limpiarPantalla(){
