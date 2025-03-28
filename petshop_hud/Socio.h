@@ -21,6 +21,7 @@ class Socio{
         Consulta* consultas[CANT_CONSULTAS];
         int topeMascotas;
         int topeConsultas;
+        int topeSocios;
     public:
         Socio();
         Socio(string, string, DtFecha);
@@ -37,10 +38,10 @@ class Socio{
         ~Socio();
 
         void agregarMascota(Mascota*);
+        void setConsulta(Consulta*);
 
         Mascota** obtenerMascotas(int&);
-
-        Consulta** obtenerConsulta(int& cantidad);
+        Consulta** obtenerConsulta(int&);
 
 };
 

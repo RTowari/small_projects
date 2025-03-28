@@ -13,7 +13,7 @@ class DtPerro: public DtMascota{
         bool vacunaCachorro;
     public:
         DtPerro();
-        DtPerro(string, Genero, float, float, RazaPerro, bool);
+        DtPerro(string, Genero, float, RazaPerro, bool, float racionDiaria = 0);
 
         RazaPerro getraza();
         bool getvacunaCachorro();

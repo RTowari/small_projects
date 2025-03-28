@@ -3,4 +3,4 @@
 
 enum TipoPelo{CORTO, MEDIANO, LARGO};
 
-#endif 
+#endif  
