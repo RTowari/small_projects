@@ -50,6 +50,8 @@ void pesoCorrecto(float);
 void racionDiariaCorrecta(float);
 void limpiarPantalla();
 void esperarPorInput();
+void imprimirMascotasDeSocio();
+void opcionesExtraEnMenu();
 
 
 int main() {
@@ -63,6 +65,7 @@ int main() {
         cout << "4) Ver consultas antes de fecha" << endl;
         cout << "5) Eliminar socio" << endl;
         cout << "6) Obtener mascotas" << endl;
+        cout << "7) Menu de desarrollador" << endl;
         cout << "0) Salir" << endl;
         cout << "Opcion: ";
 
@@ -90,6 +93,9 @@ int main() {
                 cout << "NO IMPLEMENTADA" << endl;
                 //obtenerMascotas();
                 break;
+            case 7:
+                opcionesExtraEnMenu();
+            break;
             case 0:
                 cout << "Saliendo..." << endl;
                 break;
@@ -106,20 +112,39 @@ int main() {
 
  // OPERACION 1
 void registrarSocio() {
-    DtMascota dtmascota("Buddy", Genero::MACHO, 10.5, 0.75);
+    // Variables para los datos del socio
+    string socio_ci, socio_nombre;
+    int dia, mes, anio;
+    
+    // Variables para los datos de la mascota
+    string nombre_mascota;
+    Genero genero;
+    float peso, racionDiaria;
+    bool vacunaCachorro;
+    RazaPerro raza;
+    TipoPelo tipoPelo;
+    DtPerro dtperro;
+    DtGato dtgato;
+    int Perro_o_Gato;  // 1 para perro y 0 para gato
 
     limpiarPantalla(); // Esta funcion limpia la pantalla en linux y windows
     cout <<"________________________"<<endl;
     cout <<"____REGISTRO_DE_SOCIO____"<< endl;
     
-    string socio_ci, socio_nombre;
-    int dia, mes, anio;
 
     cout << "\nCI: ";
     cin >> socio_ci;
 
     try {
-        noExisteSocio(socio_ci);
+
+        // Me aseguro de que el socio no existe y de que tengo espacios para agregar mas socios
+        noExisteSocio(socio_ci); // Esta funcion devuelve error si el socio ya existe
+        
+        int tope;
+        tope = arraySocios.topeS;
+        if (tope==MAX_SOCIOS) // Si ya tengo la maxima cantidad de socios
+            throw invalid_argument("\nERROR: HAY DEMASIADOS USUARIOS EN EL SISTEMA\n");
+
         cout << "NOMBRE: ";
         cin >> socio_nombre;
 
@@ -134,9 +159,101 @@ void registrarSocio() {
         cin >> anio;
 
         DtFecha fecha = DtFecha(dia, mes, anio);
+                
+        // pide los datos de la mascota
+        cout <<"________________________"<<endl;
+        cout <<"____REGISTRO_DE_MASCOTA____"<< endl;
 
+        cout << "NOMBRE MASCOTA: ";
+        cin >> nombre_mascota;
+
+        int opGenero;
+        cout << "\nGENERO?\n\t1.Macho\n\t2.Hembra\nINDIQUE: ";
+							cin >> opGenero;
+							
+							switch(opGenero){
+								case 1: genero=MACHO;
+										break;
+								case 2: genero=HEMBRA;
+										break;
+							}
+
+        cout << "\nPESO (kg):" << endl;
+        cin >> peso;
+        try{
+            pesoCorrecto(peso);
+
+                int opMascota, opVacuna, opPelo;				
+				cout << "\nTIPO DE MASCOTA" << endl << "\t1.Perro\n\t2.Gato\nINDIQUE: ";
+				cin >> opMascota;
+				
+				switch(opMascota){
+					case 1:	Perro_o_Gato = 1;
+                            cout << "\nTIENE VACUNA?\n\t1.Si\n\t2.No\nINDIQUE: ";
+							cin >> opVacuna;							
+							vacunaCachorro = (opVacuna == 1);
+
+                            int opRaza;
+                            cout << "\nINGRESE RAZA:\n\t1.Labrador\n\t2.Ovejero\n\t3.Bulldog\n\t4.Pitbull\n\t5.Collie\n\t6.Pekines\n\t7.Otro\nINDIQUE: ";    
+							cin >> opRaza;
+							
+							switch(opRaza){
+								case 1: raza=LABRADOR;
+										break;
+								case 2: raza=OVEJERO;
+                                        break;
+                                case 3: raza=BULLDOG;
+										break;
+                                case 4: raza=PITBULL;
+                                        break;
+                                case 5: raza=COLLIE;
+                                        break;
+                                case 6: raza=PEKINES;
+                                        break;
+                                case 7: raza=OTRO;
+                                        break;
+							}
+                            break;
+
+
+					case 2: Perro_o_Gato = 0;
+                        cout << "\nTIPO DE PELO?\n\t1.Corto\n\t2.Mediano\n\t3.Largo\nINDIQUE: ";
+						cin >> opPelo;
+						
+						switch(opPelo){
+							case 1: tipoPelo=CORTO;
+								break;
+							case 2: tipoPelo=MEDIANO;
+								break;
+                                case 3: tipoPelo=LARGO;
+									break;
+						}
+                        break;
+
+                            
+				}
+
+        }
+        catch(invalid_argument& e){
+            cout << e.what() << endl;
+        }    
+
+        // Pongo al socio en la array
         registrarSocio(socio_ci, socio_nombre, fecha);
         cout << "\nSe ha registrado en el Sistema al socio " << socio_nombre << " de CI " << socio_ci << " correctamente\n";
+
+        // Pongo a la mascota en el socio
+        if(Perro_o_Gato == 1) {
+            dtperro = DtPerro(nombre_mascota,genero,peso,raza,vacunaCachorro);
+            agregarMascota(socio_ci, dtperro);
+        }
+        else {
+            dtgato = DtGato(nombre_mascota,genero,peso,tipoPelo);
+            agregarMascota(socio_ci, dtgato);
+        }
+
+        cout << "\nSe ha registrado en el Sistema la mascota " << nombre_mascota << " del socio CI " << socio_ci << " correctamente\n";
+
 
         esperarPorInput(); // lee el enter del usuario en linux y windows
     }
@@ -156,6 +273,7 @@ void registrarSocio() {
     Genero genero;
     float peso, racionDiaria;
     bool vacunaCachorro;
+    int Perro_o_Gato;
     RazaPerro raza;
     TipoPelo tipoPelo;
 	DtPerro dtperro;
@@ -455,6 +573,124 @@ void esperarPorInput() {
     #else
         system("read -p \"Press enter to continue...\" X");
     #endif
+}
+
+// Esta funcion imprime todas las mascotas de un socio
+void imprimirMascotasDeSocio() {
+    cout << "IMPRIME LAS MASCOTAS DE UN SOCIO" << endl;
+    cout << "CI:";
+
+    string socio_ci;
+    cin >> socio_ci;
+    
+    try {
+    // Voy a buscar el socio con esta cedula en el sistema
+        Socio* socioObtenido;
+        socioObtenido = obtenerSocio(socio_ci);
+
+        // Consigo la lista de mascotas del socio y el numero de estas que tiene
+        int cantidadMascotas;
+        Mascota** listaMascotas = socioObtenido->obtenerMascotas(cantidadMascotas);
+
+        for(int i=0; i<cantidadMascotas; i++) {
+            cout << "NOMBRE: " << listaMascotas[i]->getNombre() << " | " 
+            << "GENERO: " << listaMascotas[i]->getGenero() << " | "
+            << "PESO: " << listaMascotas[i]->getPeso() << " | "
+            << endl;
+
+            // Me fijo si tengo un perro usando cast
+            try{
+                Perro& perro = dynamic_cast<Perro&>(*listaMascotas[i]);
+                cout << "RAZA: " << perro.getRazaPerro() << " | "
+                << "TIENE VACUNA: " << perro.getvacunaCachorro() << endl;
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+            // Me fijo si tengo un gato usando cast
+            try{
+                Gato& gato = dynamic_cast<Gato&>(*listaMascotas[i]);
+                cout << "TIPO DE PELO: " << gato.gettipoPelo() << endl;
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+        }
+
+
+    } catch(invalid_argument& e){
+        cout << e.what() << endl;
+    }
+}
+
+void imprimirSociosYMascotas(){
+    cout << "IMPRIME SOCIOS Y SUS MASCOTAS" << endl;
+
+    int tope = arraySocios.topeS;
+    for(int i=0; i < tope; i++){
+        Socio* socioActual = arraySocios.socios[i];
+        DtFecha fecha = socioActual->getFechaIngreso();
+
+        cout << "CI: " << socioActual->getCI() << " | "
+        << "NOMBRE: " << socioActual->getNombre() << " | "
+        << "FECHA DE INGRESO: " << fecha.getDia() << "/" << fecha.getMes() << "/" << fecha.getAnio() << endl;
+
+        // Consigo la lista de mascotas del socio y el numero de estas que tiene
+        int cantidadMascotas;
+        Mascota** listaMascotas = socioActual->obtenerMascotas(cantidadMascotas);
+
+        for(int i=0; i<cantidadMascotas; i++) {
+            cout << "NOMBRE: " << listaMascotas[i]->getNombre() << " | " 
+            << "GENERO: " << listaMascotas[i]->getGenero() << " | "
+            << "PESO: " << listaMascotas[i]->getPeso() << " | "
+            << endl;
+
+            // Me fijo si tengo un perro usando cast
+            try{
+                Perro& perro = dynamic_cast<Perro&>(*listaMascotas[i]);
+                cout << "RAZA: " << perro.getRazaPerro() << " | "
+                << "TIENE VACUNA: " << perro.getvacunaCachorro() << endl;
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+            // Me fijo si tengo un gato usando cast
+            try{
+                Gato& gato = dynamic_cast<Gato&>(*listaMascotas[i]);
+                cout << "TIPO DE PELO: " << gato.gettipoPelo() << endl;
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+        }
+
+    }
+
+}
+
+// Esta funciona agrega opciones extra en el menu para las opciones de desarrollador
+void opcionesExtraEnMenu() {
+    int opcion;
+    do {
+        
+        cout << "\n--- Bienvenido a la Veterinaria ---" << endl;
+        cout << "1) Imprimir mascotas de un socio" << endl;
+        cout << "0) Salir al menu anterior" << endl;
+
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                imprimirMascotasDeSocio();
+                break;
+            case 0:
+                cout << "Saliendo..." << endl;
+                break;
+            default:
+                cout << "Opcion invalida, intente de nuevo..." << endl;
+                break;
+        }
+    } while (opcion != 0);
 }
 
 //Funcion para liberar los socios almacenados en arraySocios

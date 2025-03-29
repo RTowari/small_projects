@@ -43,6 +43,8 @@ class Socio{
         Mascota** obtenerMascotas(int&);
         Consulta** obtenerConsulta(int&);
 
+        
+
 };
 
 #endif
