@@ -52,6 +52,7 @@ void limpiarPantalla();
 void esperarPorInput();
 void imprimirMascotasDeSocio();
 void opcionesExtraEnMenu();
+void imprimirSociosYMascotas();
 
 
 int main() {
@@ -161,7 +162,6 @@ void registrarSocio() {
         DtFecha fecha = DtFecha(dia, mes, anio);
                 
         // pide los datos de la mascota
-        cout <<"________________________"<<endl;
         cout <<"____REGISTRO_DE_MASCOTA____"<< endl;
 
         cout << "NOMBRE MASCOTA: ";
@@ -631,6 +631,7 @@ void imprimirSociosYMascotas(){
         Socio* socioActual = arraySocios.socios[i];
         DtFecha fecha = socioActual->getFechaIngreso();
 
+        cout << "___________SOCIO___________" << endl;
         cout << "CI: " << socioActual->getCI() << " | "
         << "NOMBRE: " << socioActual->getNombre() << " | "
         << "FECHA DE INGRESO: " << fecha.getDia() << "/" << fecha.getMes() << "/" << fecha.getAnio() << endl;
@@ -640,8 +641,8 @@ void imprimirSociosYMascotas(){
         Mascota** listaMascotas = socioActual->obtenerMascotas(cantidadMascotas);
 
         for(int i=0; i<cantidadMascotas; i++) {
-            cout << "NOMBRE: " << listaMascotas[i]->getNombre() << " | " 
-            << "GENERO: " << listaMascotas[i]->getGenero() << " | "
+            cout << "___________MASCOTA: " << listaMascotas[i]->getNombre() << "___________" << endl;
+            cout << "GENERO: " << listaMascotas[i]->getGenero() << " | "
             << "PESO: " << listaMascotas[i]->getPeso() << " | "
             << endl;
 
@@ -675,6 +676,7 @@ void opcionesExtraEnMenu() {
         
         cout << "\n--- Bienvenido a la Veterinaria ---" << endl;
         cout << "1) Imprimir mascotas de un socio" << endl;
+        cout << "2) Imprimir msocios y mascotas" << endl;
         cout << "0) Salir al menu anterior" << endl;
 
         cin >> opcion;
@@ -683,6 +685,9 @@ void opcionesExtraEnMenu() {
             case 1:
                 imprimirMascotasDeSocio();
                 break;
+            case 2:
+                imprimirSociosYMascotas();
+            break;
             case 0:
                 cout << "Saliendo..." << endl;
                 break;
