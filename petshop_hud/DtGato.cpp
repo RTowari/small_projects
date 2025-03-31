@@ -12,3 +12,4 @@ TipoPelo DtGato::getTipoPelo(){
 }
 
 DtGato::~DtGato(){}
+

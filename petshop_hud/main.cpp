@@ -24,23 +24,25 @@ struct{
     int topeS = 0;
 } arraySocios;
 
-// OPERACION 1 (SEMI IMPLEMENTADA)
+// OPERACION a (IMPLEMENTADA)
 void registrarSocio();
 void registrarSocio(string, string, DtFecha); // IMPLEMENTADA
-// OPERACION 2 (SEMI IMPLEMENTADA)
-void agregarMascota(); //  (SEMI IMPLEMENTADA)
-void agregarMascota(string ci, DtMascota& dtMascota);//SEMI IMPLEMENTADA
+// OPERACION b (IMPLEMENTADA)
+void agregarMascota(); //   IMPLEMENTADA
+void agregarMascota(string ci, DtMascota& dtMascota);//IMPLEMENTADA
+
+// OPERACION f (MPLEMENTADA)
+void obtenerMascotas(); //   IMPLEMENTADA
+DtMascota** obtenerMascotas(string, int&);//IMPLEMENTADA
 
 // OPERACIONES POR IMPLEMENTAR
 void eliminarSocio() {}
-void obtenerMascota() {}
 
 // Declaraciones de funciones
 void ingresarConsulta(); // NO IMPLEMENTADA 
 void verConsultasAntesDeFecha(); // NO IMPLEMENTADA 
 DtConsulta** verConsultasAntesDeFecha(DtFecha&, string, int&); // /(SEMI IMPLEMENTADA)
 void eliminarSocio(); // NO IMPLEMENTADA 
-void obtenerMascotas(); // NO IMPLEMENTADA 
 void liberarMemoria(); // IMPLEMENTADA
 
 // OPERACIONES AUXILIARES
@@ -83,16 +85,15 @@ int main() {
                 ingresarConsulta();
                 break;
             case 4:
-                cout << "NO IMPLEMENTADA" << endl;
-                //verConsultasAntesDeFecha();
+             //   cout << "NO IMPLEMENTADA" << endl;
+                verConsultasAntesDeFecha();
                 break;
             case 5:
                 cout << "NO IMPLEMENTADA" << endl;
                 //eliminarSocio();
                 break;
-            case 6:
-                cout << "NO IMPLEMENTADA" << endl;
-                //obtenerMascotas();
+            case 6:                
+                obtenerMascotas();
                 break;
             case 7:
                 opcionesExtraEnMenu();
@@ -428,16 +429,8 @@ void verConsultasAntesDeFecha() {
 
 
     try {
-       /* obtenerSocio(socio_ci);
-        cout << "Cantidad de socios registrados: " << arraySocios.topeS<< endl;
+        Socio* validaSocio = obtenerSocio(socio_ci);
 
-       if (true)
-            cout << "\nsi existe socio en el sistema con la CI " << socio_ci << " .\n";
-        else
-        
-        cout << "\nno existe socio en el sistema con la CI " << socio_ci << " .\n";
-        esperarPorInput();// lee el enter del usuario en linux y windows  No me aparece para comprobar si existe o no la ci*/
- 
         cout << "\nANTES DE LA FECHA" << endl;
         cout << "DIA: ";
         cin >> dia;
@@ -460,10 +453,9 @@ void verConsultasAntesDeFecha() {
         if (cantConsultas == 0) {
             cout << "No hay consultas antes de " << dtFecha << "." << endl;
         } else {
+            cout << "Cantidad de consultas obtenidas: " << cantConsultas << endl;
             for (int i = 0; i < cantConsultas; i++) {
-                cout << "\nFecha: " << consultasFecha[i]->getfechaConsulta()
-                     << " | Motivo: " << consultasFecha[i]->getMotivo();
-                delete consultasFecha[i];
+                    cout << "\nFecha: " << consultasFecha[i]->getfechaConsulta() << " | Motivo: " << consultasFecha[i]->getMotivo() << endl;
             }
         }
 
@@ -476,6 +468,80 @@ void verConsultasAntesDeFecha() {
     }
 }
 
+// OPERACION 5 
+
+// OPERACION 6
+void obtenerMascotas(){
+    limpiarPantalla();
+    cout << "________________________" << endl;
+    cout << "__VER__LISTADO__DE__MASCOTAS__" << endl;
+
+    string socio_ci;
+
+    cout << "\nCI: ";
+    cin >> socio_ci;
+
+    try {
+        // Valido socio con esta cedula en el sistema
+           Socio* validaSocio = obtenerSocio(socio_ci);           
+            // Consigo la lista de mascotas del socio y el numero de estas que tiene
+            int cantidadMascotas;
+            DtMascota** listaMascotas = obtenerMascotas(socio_ci, cantidadMascotas);
+
+            for(int i=0; i<cantidadMascotas; i++) {
+                string generoStr;
+                Genero genero = listaMascotas[i]->getgenero(); // Obtenemos el enum
+            
+                if (genero == MACHO) {
+                    generoStr = "MACHO";
+                } else if (genero == HEMBRA) {
+                    generoStr = "HEMBRA";
+                } else{
+                    generoStr = "Valor Genero no reconocido";
+                }
+            
+                cout << "NOMBRE: " << listaMascotas[i]->getnombre() << " | "
+                     << "GENERO: " << generoStr << " | "
+                     << "PESO: " << listaMascotas[i]->getpeso() << " | "
+                     << endl;
+    
+                // Me fijo si tengo un perro usando cast
+                try{
+                    DtPerro& perro = dynamic_cast<DtPerro&>(*listaMascotas[i]);
+                    cout << "RAZA: " << perro.getraza() << " | "
+                    << "TIENE VACUNA: " << perro.getvacunaCachorro() << endl;
+                    cout << "_______________________________" << endl;
+                } 
+                catch(bad_cast) { 
+                }
+                // Me fijo si tengo un gato usando cast
+                try{
+                    DtGato& gato = dynamic_cast<DtGato&>(*listaMascotas[i]);
+                    switch (gato.getTipoPelo()) {
+                        case CORTO:
+                            cout << "TIPO DE PELO: CORTO" << endl;
+                            break;
+                        case MEDIANO:
+                            cout << "TIPO DE PELO: MEDIANO" << endl;
+                            break;
+                        case LARGO:
+                            cout << "TIPO DE PELO: LARGO" << endl;
+                            break;
+                        default:
+                            cout << "TIPO DE PELO: Desconocido" << endl; // Manejar valores inesperados
+                            break;
+                    }
+                    cout << "_______________________________" << endl;
+                } 
+                catch(bad_cast) { 
+                }
+            }
+
+    } catch (invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+   
+}
 // OPERACIONES A IMPLEMENTAR
 void registrarSocio(string ci, string nombre, DtFecha fecha) {
     Socio* socio = new Socio(ci,nombre,fecha);
@@ -525,6 +591,27 @@ DtConsulta** verConsultasAntesDeFecha(DtFecha& dtFecha, string ci, int& cantCons
 
     return dtConsultas;
 }
+
+DtMascota** obtenerMascotas( string ci, int& cantMascotas) {
+    cantMascotas = 0;
+    Socio* socio = obtenerSocio(ci);    
+    Mascota** mascotas = socio->obtenerMascotas(cantMascotas);  
+    DtMascota** dtMascota = new DtMascota*[cantMascotas];
+	DtGato* dtgato;
+	DtPerro* dtperro;    
+        for(int i=0;i<cantMascotas;i++){            
+            if(Gato* gato = dynamic_cast<Gato*>(mascotas[i])){                
+                dtgato = new DtGato(gato->getNombre(),gato->getGenero(),gato->getPeso(),gato->gettipoPelo());
+                    dtMascota[i]=dtgato;
+            }else{
+                if(Perro* perro = dynamic_cast<Perro*>(mascotas[i])){                    
+                        dtperro = new DtPerro(perro->getNombre(),perro->getGenero(),perro->getPeso(),perro->getRazaPerro(),perro->getvacunaCachorro());
+                        dtMascota[i]=dtperro;
+                }
+            }
+        }
+	return dtMascota;
+    }
 
 // OPERACIONES AUXILIARES
 void noExisteSocio(string ci) {
