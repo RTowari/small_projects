@@ -30,20 +30,24 @@ void registrarSocio(string, string, DtFecha); // IMPLEMENTADA
 // OPERACION b (IMPLEMENTADA)
 void agregarMascota(); //   IMPLEMENTADA
 void agregarMascota(string ci, DtMascota& dtMascota);//IMPLEMENTADA
+// OPERACION c (IMPLEMENTADA)
+void ingresarConsulta(); // IMPLEMENTADA 
+// OPERACION d (IMPLEMENTADA)
+void verConsultasAntesDeFecha(); // IMPLEMENTADA 
+DtConsulta** verConsultasAntesDeFecha(DtFecha&, string, int&); // IMPLEMENTADA
 
 // OPERACION f (MPLEMENTADA)
 void obtenerMascotas(); //   IMPLEMENTADA
 DtMascota** obtenerMascotas(string, int&);//IMPLEMENTADA
 
 // OPERACIONES POR IMPLEMENTAR
+// OPERACION e (no implementada)
 void eliminarSocio() {}
 
 // Declaraciones de funciones
-void ingresarConsulta(); // NO IMPLEMENTADA 
-void verConsultasAntesDeFecha(); // NO IMPLEMENTADA 
-DtConsulta** verConsultasAntesDeFecha(DtFecha&, string, int&); // /(SEMI IMPLEMENTADA)
+
 void eliminarSocio(); // NO IMPLEMENTADA 
-void liberarMemoria(); // IMPLEMENTADA
+
 
 // OPERACIONES AUXILIARES
 void noExisteSocio(string ci);
@@ -52,13 +56,14 @@ void pesoCorrecto(float);
 void racionDiariaCorrecta(float);
 void limpiarPantalla();
 void esperarPorInput();
+void liberarMemoria();
 void imprimirMascotasDeSocio();
 void opcionesExtraEnMenu();
 void imprimirSociosYMascotas();
+void imprimirSocioyMotivosConsultasAntesDeFecha();
 
 
 int main() {
-    //van todos los topes
     int opcion;
     do {
         cout << "\n--- Bienvenido a la Veterinaria ---" << endl;
@@ -85,7 +90,6 @@ int main() {
                 ingresarConsulta();
                 break;
             case 4:
-             //   cout << "NO IMPLEMENTADA" << endl;
                 verConsultasAntesDeFecha();
                 break;
             case 5:
@@ -226,8 +230,8 @@ void registrarSocio() {
 								break;
 							case 2: tipoPelo=MEDIANO;
 								break;
-                                case 3: tipoPelo=LARGO;
-									break;
+                            case 3: tipoPelo=LARGO;
+								break;
 						}
                         break;
 
@@ -264,7 +268,7 @@ void registrarSocio() {
 }
 
  // OPERACION 2
- void agregarMascota() {
+void agregarMascota() {
 
     limpiarPantalla(); // Esta funcion limpia la pantalla en linux y windows
     cout <<"________________________"<<endl;
@@ -358,7 +362,7 @@ void registrarSocio() {
         catch(invalid_argument& e){
             cout << e.what() << endl;
         }                  
-      
+
         esperarPorInput(); // lee el enter del usuario en linux y windows
     }
     catch(invalid_argument& e){
@@ -483,64 +487,64 @@ void obtenerMascotas(){
 
     try {
         // Valido socio con esta cedula en el sistema
-           Socio* validaSocio = obtenerSocio(socio_ci);           
-            // Consigo la lista de mascotas del socio y el numero de estas que tiene
-            int cantidadMascotas;
-            DtMascota** listaMascotas = obtenerMascotas(socio_ci, cantidadMascotas);
+        Socio* validaSocio = obtenerSocio(socio_ci);           
+        // Consigo la lista de mascotas del socio y el numero de estas que tiene
+        int cantidadMascotas;
+        DtMascota** listaMascotas = obtenerMascotas(socio_ci, cantidadMascotas);
 
-            for(int i=0; i<cantidadMascotas; i++) {
-                string generoStr;
-                Genero genero = listaMascotas[i]->getgenero(); // Obtenemos el enum
-            
-                if (genero == MACHO) {
-                    generoStr = "MACHO";
-                } else if (genero == HEMBRA) {
-                    generoStr = "HEMBRA";
-                } else{
-                    generoStr = "Valor Genero no reconocido";
-                }
-            
-                cout << "NOMBRE: " << listaMascotas[i]->getnombre() << " | "
-                     << "GENERO: " << generoStr << " | "
-                     << "PESO: " << listaMascotas[i]->getpeso() << " | "
-                     << endl;
-    
-                // Me fijo si tengo un perro usando cast
-                try{
-                    DtPerro& perro = dynamic_cast<DtPerro&>(*listaMascotas[i]);
-                    cout << "RAZA: " << perro.getraza() << " | "
-                    << "TIENE VACUNA: " << perro.getvacunaCachorro() << endl;
-                    cout << "_______________________________" << endl;
-                } 
-                catch(bad_cast) { 
-                }
-                // Me fijo si tengo un gato usando cast
-                try{
-                    DtGato& gato = dynamic_cast<DtGato&>(*listaMascotas[i]);
-                    switch (gato.getTipoPelo()) {
-                        case CORTO:
-                            cout << "TIPO DE PELO: CORTO" << endl;
-                            break;
-                        case MEDIANO:
-                            cout << "TIPO DE PELO: MEDIANO" << endl;
-                            break;
-                        case LARGO:
-                            cout << "TIPO DE PELO: LARGO" << endl;
-                            break;
-                        default:
-                            cout << "TIPO DE PELO: Desconocido" << endl; // Manejar valores inesperados
-                            break;
-                    }
-                    cout << "_______________________________" << endl;
-                } 
-                catch(bad_cast) { 
-                }
+        for(int i=0; i<cantidadMascotas; i++) {
+            string generoStr;
+            Genero genero = listaMascotas[i]->getgenero(); // Obtenemos el enum
+        
+            if (genero == MACHO) {
+                generoStr = "MACHO";
+            } else if (genero == HEMBRA) {
+                generoStr = "HEMBRA";
+            } else{
+                generoStr = "Valor Genero no reconocido";
             }
+        
+            cout << "NOMBRE: " << listaMascotas[i]->getnombre() << " | "
+                << "GENERO: " << generoStr << " | "
+                << "PESO: " << listaMascotas[i]->getpeso() << " | "
+                << endl;
+
+            // Me fijo si tengo un perro usando cast
+            try{
+                DtPerro& perro = dynamic_cast<DtPerro&>(*listaMascotas[i]);
+                cout << "RAZA: " << perro.getraza() << " | "
+                << "TIENE VACUNA: " << perro.getvacunaCachorro() << endl;
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+            // Me fijo si tengo un gato usando cast
+            try{
+                DtGato& gato = dynamic_cast<DtGato&>(*listaMascotas[i]);
+                switch (gato.getTipoPelo()) {
+                    case CORTO:
+                        cout << "TIPO DE PELO: CORTO" << endl;
+                        break;
+                    case MEDIANO:
+                        cout << "TIPO DE PELO: MEDIANO" << endl;
+                        break;
+                    case LARGO:
+                        cout << "TIPO DE PELO: LARGO" << endl;
+                        break;
+                    default:
+                        cout << "TIPO DE PELO: Desconocido" << endl; // Manejar valores inesperados
+                        break;
+                }
+                cout << "_______________________________" << endl;
+            } 
+            catch(bad_cast) { 
+            }
+        }
 
     } catch (invalid_argument& e) {
         cout << e.what() << endl;
     }
-   
+
 }
 // OPERACIONES A IMPLEMENTAR
 void registrarSocio(string ci, string nombre, DtFecha fecha) {
@@ -756,6 +760,54 @@ void imprimirSociosYMascotas(){
 
 }
 
+void imprimirSocioyMotivosConsultasAntesDeFecha() {
+    cout << "________________________" << endl;
+    cout << "__IMPRIMIR__CONSULTAS__ANTES__DE__FECHA__" << endl;
+
+    string socio_ci;
+    int dia, mes, anio, cantConsultas;
+    DtFecha dtFecha;
+
+    cout << "\nCI DEL SOCIO: ";
+    cin >> socio_ci;
+
+    try {
+        Socio* socioActual = obtenerSocio(socio_ci);
+
+        cout << "\nCONSULTAS ANTES DE LA FECHA:" << endl;
+
+        dtFecha = DtFecha(dia, mes, anio);
+        DtConsulta** consultasFecha = verConsultasAntesDeFecha(dtFecha, socio_ci, cantConsultas);
+
+        cout << "___________SOCIO___________" << endl;
+        cout << "CI: " << socioActual->getCI() << " | "
+            << "NOMBRE: " << socioActual->getNombre() << " | "
+            << "FECHA DE INGRESO: " << socioActual->getFechaIngreso().getDia() << "/"
+            << socioActual->getFechaIngreso().getMes() << "/"
+            << socioActual->getFechaIngreso().getAnio() << endl;
+
+        if (cantConsultas == 0) {
+            cout << "No hay consultas antes de " << dtFecha.getDia() << "/" << dtFecha.getMes() << "/" << dtFecha.getAnio() << "." << endl;
+        } else {
+            cout << "___________CONSULTAS___________" << endl;
+            for (int i = 0; i < cantConsultas; i++) {
+                DtConsulta* consulta = consultasFecha[i];
+                cout << "FECHA: " << consulta->getfechaConsulta().getDia() << "/"
+                    << consulta->getfechaConsulta().getMes() << "/"
+                    << consulta->getfechaConsulta().getAnio() << " | "
+                    << "MOTIVO: " << consulta->getMotivo() << endl;
+                cout << "_______________________________" << endl;
+            }
+        }
+
+        delete[] consultasFecha; // Liberar memoria dinámica
+        esperarPorInput(); // Para que el usuario presione enter antes de continuar
+
+    } catch (invalid_argument& e) {
+        cout << e.what() << endl;
+    }
+}
+
 // Esta funciona agrega opciones extra en el menu para las opciones de desarrollador
 void opcionesExtraEnMenu() {
     int opcion;
@@ -763,7 +815,9 @@ void opcionesExtraEnMenu() {
         
         cout << "\n--- Bienvenido a la Veterinaria ---" << endl;
         cout << "1) Imprimir mascotas de un socio" << endl;
-        cout << "2) Imprimir msocios y mascotas" << endl;
+        cout << "2) Imprimir socios y mascotas" << endl;
+        cout << "3) imprimir socio y motivos de consultas antes de la fecha" << endl;
+        
         cout << "0) Salir al menu anterior" << endl;
 
         cin >> opcion;
@@ -774,7 +828,10 @@ void opcionesExtraEnMenu() {
                 break;
             case 2:
                 imprimirSociosYMascotas();
-            break;
+                break;
+            case 3:
+                imprimirSocioyMotivosConsultasAntesDeFecha();
+                break;
             case 0:
                 cout << "Saliendo..." << endl;
                 break;
