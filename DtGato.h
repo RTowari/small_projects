@@ -14,11 +14,12 @@ class DtGato : public DtMascota{
         TipoPelo tipoPelo;
     public:
         DtGato();
-        DtGato(string nombre, Genero genero, float peso, float racionDiaria, TipoPelo tipoPelo);
+        DtGato(string nombre, Genero genero, float peso, TipoPelo tipoPelo, float racionDiaria = 0);
         
         TipoPelo getTipoPelo();
         
         ~DtGato();
 };
+
 
 #endif

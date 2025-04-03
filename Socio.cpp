@@ -30,20 +30,42 @@ void Socio::setFechaIngreso(DtFecha fechai){
     this->fechaIngreso=fechai;
 }
 
-void Socio::setConsulta(Consulta* consulta){
-    this->consultas[topeConsultas] = consulta;  
-    this->topeConsultas++;
-}
-
 void Socio::agregarMascota(Mascota* mascota){
     this->mascotas[this->topeMascotas]=mascota;
     this->topeMascotas++;
 }
 
+void Socio::setConsulta(Consulta* consulta){
+    this->consultas[this->topeConsultas] = consulta;  
+    this->topeConsultas++;
+}
+
+Consulta** Socio::obtenerConsulta(int& cantidad) {
+    cantidad = this->topeConsultas;
+    return this->consultas;
+}
 
 Mascota** Socio:: obtenerMascotas(int& cantMascotas){
     cantMascotas=this->topeMascotas;
     return this->mascotas;
 }
+
+void Socio::vaciarConsultas(){
+    if(this->topeConsultas > 0){
+        for(int i = 0; i < this->topeConsultas; i++){
+            delete(this->consultas[i]);
+        }
+    }
+}
+
+void Socio::vaciarMascotas(){
+    if(this->topeMascotas > 0){
+        for(int i = 0; i < this->topeMascotas; i++){
+            delete(this->mascotas[i]);
+        }
+    }
+}
+
+
 
 Socio::~Socio(){}
