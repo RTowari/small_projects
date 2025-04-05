@@ -43,7 +43,8 @@ class Socio{
         Mascota** obtenerMascotas(int&);
         Consulta** obtenerConsulta(int&);
 
-        
+        void vaciarConsultas();
+        void vaciarMascotas();
 
 };
 

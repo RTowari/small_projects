@@ -50,4 +50,20 @@ Mascota** Socio:: obtenerMascotas(int& cantMascotas){
     return this->mascotas;
 }
 
+void Socio::vaciarConsultas(){
+    if(this->topeConsultas > 0){
+        for(int i = 0; i < this->topeConsultas; i++){
+            delete(this->consultas[i]);
+        }
+    }
+}
+
+void Socio::vaciarMascotas(){
+    if(this->topeMascotas > 0){
+        for(int i = 0; i < this->topeMascotas; i++){
+            delete(this->mascotas[i]);
+        }
+    }
+}
+
 Socio::~Socio(){}
