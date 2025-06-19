@@ -1,6 +1,0 @@
-#ifndef RAZAPERRO
-#define RAZAPERRO
-
-enum RazaPerro{LABRADOR, OVEJERO, BULLDOG, PITBULL, COLLIE, PEKINES, OTRO};
-
-#endif 
